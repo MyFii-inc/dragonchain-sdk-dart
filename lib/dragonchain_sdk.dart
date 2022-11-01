@@ -343,7 +343,7 @@ class DragonchainClient {
         this.getHttpHeaders(path, method, body: body, contentType: contentType);
     String url = '${this.endpoint}$path';
     var request = await httpMethods[method](Uri.parse(url));
-    if (request is BrowserHttpClientRequest) request.credentialsMode = BrowserHttpClientCredentialsMode.omit;
+    if (request is BrowserHttpClientRequest) request.browserCredentialsMode = false;
     headers.forEach((key, value) => request.headers.set(key, value));
     if (['PUT', 'POST', 'DELETE'].contains(method)) request.write(body);
     var response = await request.close();
