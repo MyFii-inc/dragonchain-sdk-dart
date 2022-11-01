@@ -26,7 +26,7 @@ class DragonchainClient {
   getStatus() async => await this.get('/v1/status');
 
   createTransaction(String transactionType, dynamic payload,
-      {String tag, String callbackURL}) async {
+      {String? tag, String? callbackURL}) async {
     if (payload == null) payload = '';
     var transactionBody = {
       "version": '1',
@@ -35,7 +35,7 @@ class DragonchainClient {
     };
     if (tag != null && tag != '') transactionBody['tag'] = tag;
     return await this
-        .post('/v1/transaction', transactionBody, callbackURL: callbackURL);
+        .post('/v1/transaction', transactionBody, callbackURL: callbackURL??"");
   }
 
   createBulkTransaction(
@@ -56,12 +56,12 @@ class DragonchainClient {
   }
 
   queryTransactions(String transactionType, String redisearchQuery,
-      {bool verbatim,
-      int offset,
-      int limit,
-      String sortBy,
-      bool sortAscending,
-      bool idsOnly}) async {
+      {bool? verbatim,
+      int? offset,
+      int? limit,
+      String? sortBy,
+      bool? sortAscending,
+      bool? idsOnly}) async {
     Map<String, dynamic> queryParams = {
       "transaction_type": transactionType,
       "q": redisearchQuery,
@@ -81,12 +81,12 @@ class DragonchainClient {
   }
 
   queryBlocks(String redisearchQuery,
-      {bool verbatim,
-      int offset,
-      int limit,
-      String sortBy,
-      bool sortAscending,
-      bool idsOnly}) async {
+      {bool? verbatim,
+      int? offset,
+      int? limit,
+      String? sortBy,
+      bool? sortAscending,
+      bool? idsOnly}) async {
     Map<String, dynamic> queryParams = {
       "q": redisearchQuery,
       "offset": (offset != null) ? offset : 0,
@@ -101,7 +101,7 @@ class DragonchainClient {
   }
 
   createTransactionType(String transactionType,
-      [List<Map<String, String>> customIndexedFields]) async {
+      [List<Map<String, String>>? customIndexedFields]) async {
     if (transactionType == null || transactionType == '')
       throw Exception('Empty transaction type');
     var body = {"version": '2', "txn_type": transactionType};
@@ -122,9 +122,9 @@ class DragonchainClient {
   getTransaction(String transactionId) async =>
       await this.get("/v1/transaction/$transactionId");
 
-  createApiKey([String nickname]) async {
+  createApiKey([String? nickname]) async {
     Map<String, String> body = {};
-    if (nickname != null || nickname != '') body['nickname'] = nickname;
+    if (nickname != null || nickname != '') body['nickname'] = nickname??"";
     return await this.post("/v1/api-key", body);
   }
 
@@ -138,14 +138,14 @@ class DragonchainClient {
       await this.put("/v1/api-key/$keyId", {"nickname": nickname});
 
   createSmartContract(String transactionType, String image, String cmd,
-      {List<String> args,
-      String executionOrder,
-      Map<String, String> environmentVariables,
-      Map<String, String> secrets,
-      int scheduleIntervalInSeconds,
-      String cronExpression,
-      String registryCredentials,
-      List<Map<String, String>> customIndexedFields}) async {
+      {List<String>? args,
+      String? executionOrder,
+      Map<String, String>? environmentVariables,
+      Map<String, String>? secrets,
+      int? scheduleIntervalInSeconds,
+      String? cronExpression,
+      String? registryCredentials,
+      List<Map<String, String>>? customIndexedFields}) async {
     if (scheduleIntervalInSeconds != null && cronExpression != null)
       throw Exception(
           "Parameters 'scheduleIntervalInSeconds' AND 'cronExpression' are mutually exclusive");
@@ -173,17 +173,17 @@ class DragonchainClient {
   }
 
   updateSmartContract(String smartContractId,
-      {String image,
-      String cmd,
-      List<String> args,
-      String executionOrder,
-      bool enabled,
-      Map<String, String> environmentVariables,
-      Map<String, String> secrets,
-      int scheduleIntervalInSeconds,
-      String cronExpression,
-      String registryCredentials,
-      bool disableSchedule}) async {
+      {String? image,
+      String? cmd,
+      List<String>? args,
+      String? executionOrder,
+      bool? enabled,
+      Map<String, String>? environmentVariables,
+      Map<String, String>? secrets,
+      int? scheduleIntervalInSeconds,
+      String? cronExpression,
+      String? registryCredentials,
+      bool? disableSchedule}) async {
     if (scheduleIntervalInSeconds != null && cronExpression != null)
       throw Exception(
           "Parameters 'scheduleIntervalInSeconds' AND 'cronExpression' are mutually exclusive");
@@ -205,7 +205,7 @@ class DragonchainClient {
     return await this.put("/v1/contract/$smartContractId", body);
   }
 
-  getSmartContract({String smartContractId, String transactionType}) async {
+  getSmartContract({String? smartContractId, String ?transactionType}) async {
     if (smartContractId != null && transactionType != null)
       throw Exception(
           "Only one of 'smartContractId' or 'transactionType' can be specified");
@@ -220,7 +220,7 @@ class DragonchainClient {
   deleteSmartContract(String smartContractId) async =>
       await this.delete("/v1/contract/$smartContractId");
 
-  getSmartContractLogs(String smartContractId, {int tail, String since}) async {
+  getSmartContractLogs(String smartContractId, {int? tail, String? since}) async {
     Map<String, dynamic> queryParams = {};
     if (tail != null) queryParams["tail"] = tail;
     if (since != null) queryParams["since"] = since;
@@ -233,7 +233,7 @@ class DragonchainClient {
   getSmartContractObject(String key, String smartContractId) async =>
       this.get("/v1/get/$smartContractId/$key", false);
 
-  listSmartContractObjects(String smartContractId, [String prefixKey]) async {
+  listSmartContractObjects(String smartContractId, [String? prefixKey]) async {
     String path = "/v1/list/$smartContractId";
     if (prefixKey != null) {
       if (prefixKey.endsWith("/"))
@@ -246,7 +246,7 @@ class DragonchainClient {
   getPendingVerifications(String blockId) async =>
       await this.get("/v1/verifications/pending/$blockId");
 
-  getVerifications(String blockId, [int level]) async {
+  getVerifications(String blockId, [int? level]) async {
     if (level != null)
       return await this.get("/v1/verifications/$blockId?level=$level");
     return await this.get("/v1/verifications/$blockId");
@@ -265,7 +265,7 @@ class DragonchainClient {
     return this.makeRequest(path, 'PUT', body: bodyString);
   }
 
-  post(String path, dynamic body, {String callbackURL}) async {
+  post(String path, dynamic body, {String? callbackURL}) async {
     String bodyString = body is String ? body : jsonEncode(body);
     return this.makeRequest(path, 'POST', body: bodyString);
   }
@@ -342,7 +342,7 @@ class DragonchainClient {
     var headers =
         this.getHttpHeaders(path, method, body: body, contentType: contentType);
     String url = '${this.endpoint}$path';
-    var request = await httpMethods[method](Uri.parse(url));
+    var request = await httpMethods[method]!(Uri.parse(url));
     if (request is BrowserHttpClientRequest) request.browserCredentialsMode = false;
     headers.forEach((key, value) => request.headers.set(key, value));
     if (['PUT', 'POST', 'DELETE'].contains(method)) request.write(body);
@@ -357,10 +357,10 @@ class DragonchainClient {
   }
 
   static createClient(
-      {String dragonchainId,
-      String authKeyId,
-      String authKey,
-      String endpoint,
+      {String? dragonchainId,
+      String? authKeyId,
+      String? authKey,
+      String? endpoint,
       bool verify = false,
       String algorithm = 'SHA256'}) async {
     if (dragonchainId == null || dragonchainId == '')
@@ -369,7 +369,7 @@ class DragonchainClient {
       endpoint = await ConfigService.getDragonchainEndpoint(dragonchainId);
     logger.d(endpoint);
     var credentials = new CredentialService(
-        dragonchainId, {"authKeyId": authKeyId, "authKey": authKey}, algorithm);
+        dragonchainId, {"authKeyId": authKeyId??'', "authKey": authKey??""}, algorithm);
     return new DragonchainClient(endpoint, credentials, verify);
   }
 }

@@ -20,9 +20,9 @@ class ConfigService {
   static Future<Map<String, String>> getDragonchainCredentials(
       String dragonchainId) async {
     logger.d(storage);
-    String authKeyId = await storage.read(key: "authKeyId:$dragonchainId");
+    String? authKeyId = await storage.read(key: "authKeyId:$dragonchainId");
     logger.d('AKID: $authKeyId');
-    String authKey = await storage.read(key: "authKey:$dragonchainId");
+    String? authKey = await storage.read(key: "authKey:$dragonchainId");
     if (authKeyId == null || authKey == null) {
       throw Exception("Failed to find saved credentials for $dragonchainId");
     }

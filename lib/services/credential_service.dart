@@ -22,8 +22,8 @@ class CredentialService {
     if (authKeyId == '' || authKey == '') {
       var credentials =
           await ConfigService.getDragonchainCredentials(dragonchainId);
-      authKeyId = credentials['authKeyId'];
-      authKey = credentials['authKey'];
+      authKeyId = credentials['authKeyId']!;
+      authKey = credentials['authKey']!;
     }
     return new CredentialService(
         dragonchainId, {authKeyId: authKeyId, authKey: authKey}, hmacAlgo);
@@ -34,7 +34,7 @@ class CredentialService {
     var message = CredentialService.getHmacMessageString(method, path,
         this.dragonchainId, timestamp, contentType, this.hmacAlgo, body);
     var bytes = utf8.encode(message);
-    var encodedAuthKey = utf8.encode(this.credentials['authKey']);
+    var encodedAuthKey = utf8.encode(this.credentials['authKey']!);
     var hmacSha256 = new Hmac(sha256, encodedAuthKey);
     var signature = base64.encode(hmacSha256.convert(bytes).bytes);
     return 'DC1-HMAC-${this.hmacAlgo} ${this.credentials['authKeyId']}:$signature';
